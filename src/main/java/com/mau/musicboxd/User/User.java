@@ -1,9 +1,12 @@
 package com.mau.musicboxd.User;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "\"User\"")
 public class User {
 
     @Id
@@ -16,25 +19,28 @@ public class User {
         strategy = GenerationType.SEQUENCE,
         generator = "user_sequence"
     )
+
     private Long id;
     private String name;
     private String email;
+    private LocalDate dob;
+    @Transient
     private Integer age;
 
     public User(){
 
     }
-    public User(Long id, String name, String email, Integer age){
+    public User(Long id, String name, String email, LocalDate dob){
         this.id = id;
         this.name = name;
         this.email = email;
-        this.age = age;
+        this.dob = dob;
     }
 
-    public User(String name, String email, Integer age){
+    public User(String name, String email, LocalDate dob){
         this.name = name;
         this.email = email;
-        this.age = age;
+        this.dob = dob;
     }
     public Long getId() {
         return id;
@@ -54,10 +60,17 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public Integer getAge() {
-        return age;
+    public LocalDate getdob() {
+        return dob;
     }
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setdob(LocalDate dob) {
+        this.dob = dob;
+    }
+    public Integer getAge() {
+        return Period.between(this.dob, LocalDate.now()).getYears();
+    }
+    @Override
+    public String toString(){
+        return "name= " + this.name + " id= " + this.id + " dob= " + this.dob + " age= " + this.age;
     }
 }
