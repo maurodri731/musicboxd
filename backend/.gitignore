@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### environment ###
+/src/main/java/com/mau/musicboxd/SpotifySetup/ConfigKeys.java

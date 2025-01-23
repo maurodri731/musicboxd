@@ -1,11 +1,15 @@
+import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
-import NavbarComp from "./components/NavbarComp";
+import TopArtists from "./components/TopArtists";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
       <div>
-        <Login/>
+        <Routes>
+          <Route path="/" element={<Login/>}/>
+          <Route path="/user-top-artists" element={<TopArtists/>}/> 
+        </Routes>
       </div>
   )
 }

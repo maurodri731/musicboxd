@@ -165,3 +165,7 @@
 .login-container a:hover {
   text-decoration: underline;
 }
+
+.text {
+  color: white;
+}
