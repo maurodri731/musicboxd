@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import TopArtists from "./components/TopArtists";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import UserPage from "./components/UserPage";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login/>}/>
           <Route path="/user-top-artists" element={<TopArtists/>}/> 
+          <Route path="/user-page" element={<UserPage/>}/>
         </Routes>
       </div>
   )

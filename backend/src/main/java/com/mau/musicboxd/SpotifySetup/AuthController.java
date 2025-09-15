@@ -13,11 +13,8 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
-import se.michaelthelin.spotify.model_objects.specification.Artist;
-import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
-import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,28 +26,28 @@ public class AuthController {
     public static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/api/get-user-code");
     private String code = "";
 
-    private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
+    protected static final SpotifyApi spotifyApi = new SpotifyApi.Builder()//build the object that will handle all of the api calls
         .setClientId(ConfigKeys.API_KEY.getKey())
         .setClientSecret(ConfigKeys.API_SECRET.getKey())
         .setRedirectUri(redirectUri)
         .build();
 
-    @GetMapping("login")
+    @GetMapping("login")//build the request so that the user gets redirected to the spotify login page... oAuth2!!!!
     @ResponseBody
     public String spotifyLogin() {
         AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
-            .scope("user-read-private, user-read-email, user-top-read")
+            .scope("user-read-private, user-read-email, user-top-read, playlist-read")//set the permissions the user will grant the server
             .show_dialog(true)
             .build();
         
 
         final URI uri = authorizationCodeUriRequest.execute();
-        return uri.toString();
+        return uri.toString();//this return is exactly what sends you to the spotify login screen
     }
 
-    @GetMapping("/get-user-code")
+    @GetMapping("/get-user-code")//when the user has logged in they will be redirected here, where the access token and the refresh token are fetched from the api
     public String getSpotifyUserCode(@RequestParam("code") String userCode, HttpServletResponse resposnse) throws IOException {
-        code = userCode;
+        code = userCode;//the code used to fetch the access and refresh tokens is given with the redirect uri
         AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
 
         try{
@@ -58,33 +55,14 @@ public class AuthController {
 
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-
+            //there is no need to save the tokens in variables separate from the Api object
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         }
         catch(IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-
-        resposnse.sendRedirect("http://localhost:5173/user-top-artists");
-        return spotifyApi.getAccessToken();
-    }
-
-    @GetMapping(value = "user-top-artists")
-    public Artist[] getUserTopArtists() {
-        final GetUsersTopArtistsRequest getUsersTopArtistsRequest = spotifyApi.getUsersTopArtists()
-            .time_range("medium_term")
-            .limit(10)
-            .offset(5)
-            .build();
-        
-        try{
-            final Paging<Artist> artistPaging = getUsersTopArtistsRequest.execute();
-
-            return artistPaging.getItems();
-        }
-        catch (Exception e) {
-            System.out.println("Something went wrong\n" + e.getMessage());
-        }
-        return new Artist[0];
+        //when the access and refresh token are set, send them to the user detials page, this is the first thing the user sees after completing login with spotify
+        resposnse.sendRedirect("http://localhost:5173/user-page");
+        return spotifyApi.getAccessToken();//this last return allows the app to keep running with the spotify credentials
     }
 }

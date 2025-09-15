@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MusicboxdApplication<musicboxd>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.mau.musicboxd.MusicboxdApplication",
+            "projectName": "musicboxd",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
