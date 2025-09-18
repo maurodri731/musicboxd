@@ -3,9 +3,13 @@ package com.mau.musicboxd.User;
 import java.time.LocalDate;
 import java.time.Period;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.*;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "\"User\"")
 public class User {
 
@@ -23,54 +27,37 @@ public class User {
     private Long id;
     private String name;
     private String email;
-    private LocalDate dob;
-    @Transient
-    private Integer age;
+    private String password;
+    @CreatedDate
+    private LocalDate createdAt;
 
     public User(){
 
     }
-    public User(Long id, String name, String email, LocalDate dob){
+    public User(Long id, String name, String email){
         this.id = id;
         this.name = name;
         this.email = email;
-        this.dob = dob;
     }
 
-    public User(String name, String email, LocalDate dob){
+    public User(String name, String email, String password){
         this.name = name;
         this.email = email;
-        this.dob = dob;
+        this.password = password;
     }
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public LocalDate getdob() {
-        return dob;
-    }
-    public void setdob(LocalDate dob) {
-        this.dob = dob;
-    }
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
-    }
+
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
+    public String getEmail() {return email;}
+    public void setEmail(String email) {this.email = email;}
+    public String getPassword() {return password;}
+    public void setPassword(String password) {this.password = password;}
+    public LocalDate getCreatedDate() {return createdAt;}
+
     @Override
     public String toString(){
-        return "name= " + this.name + " id= " + this.id + " dob= " + this.dob + " age= " + this.age;
+        return "name= " + this.name + " id= " + this.id;
     }
 }

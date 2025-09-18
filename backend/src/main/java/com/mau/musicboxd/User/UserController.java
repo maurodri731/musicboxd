@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void registerNewUser(@RequestBody User user){
+    public void registerNewUser(@RequestBody User user){//RequestBody fits the request body into the user object
         userService.addNewUser(user);
     }
 

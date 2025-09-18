@@ -7,24 +7,19 @@ import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class UserConfig {
-
     @Bean
-    CommandLineRunner commandLineRunner(UserRepository repository){
+    CommandLineRunner commandLineRunner(UserRepository repository, PasswordEncoder passwordEncoder){
         return args -> {
             User mauri = new User(
                 "mauri",
                 "mau@gmail.com",
-                LocalDate.of(2000, Month.JANUARY, 5)
+                passwordEncoder.encode("1233456")
             );
-            User mau = new User(
-                "mau",
-                "m@gmail.com",
-                LocalDate.of(2005, Month.JANUARY, 5)
-            );
-            repository.saveAll(List.of(mauri, mau));
+            repository.saveAll(List.of(mauri));
         };
     }
 }
