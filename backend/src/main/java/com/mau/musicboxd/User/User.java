@@ -1,7 +1,6 @@
 package com.mau.musicboxd.User;
 
 import java.time.LocalDate;
-import java.time.Period;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,7 +22,7 @@ public class User {
         strategy = GenerationType.SEQUENCE,
         generator = "user_sequence"
     )
-
+    
     private Long id;
     private String name;
     private String email;
