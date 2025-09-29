@@ -1,4 +1,4 @@
-package com.mau.musicboxd.SpotifySetup;
+package com.mau.musicboxd.auth;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,17 +22,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
-public class AuthController {
+public class SpotifyAuthController {
     public static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/api/get-user-code");
     private String code = "";
+    private final SpotifyApi spotifyApi;
 
-    protected static final SpotifyApi spotifyApi = new SpotifyApi.Builder()//build the object that will handle all of the api calls
+    public SpotifyAuthController(SpotifyApi spotifyApi){
+        this.spotifyApi = spotifyApi;
+    }
+
+    /*protected static final SpotifyApi spotifyApi = new SpotifyApi.Builder()//build the object that will handle all of the api calls
         .setClientId(ConfigKeys.API_KEY.getKey())
         .setClientSecret(ConfigKeys.API_SECRET.getKey())
         .setRedirectUri(redirectUri)
-        .build();
+        .build();*/
 
-    @GetMapping("login")//build the request so that the user gets redirected to the spotify login page... oAuth2!!!!
+    @GetMapping("/spotify-login")//build the request so that the user gets redirected to the spotify login page... oAuth2!!!!
     @ResponseBody
     public String spotifyLogin() {
         AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()

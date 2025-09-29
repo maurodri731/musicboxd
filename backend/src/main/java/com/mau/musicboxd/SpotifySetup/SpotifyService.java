@@ -21,7 +21,11 @@ import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfi
 @Service
 public class SpotifyService {
 
-    private final SpotifyApi spotifyApi = AuthController.spotifyApi;
+    private final SpotifyApi spotifyApi;
+
+    public SpotifyService(SpotifyApi spotifyApi){
+        this.spotifyApi = spotifyApi;
+    }
 
     public Artist[] getUserTopArtists() {
         final GetUsersTopArtistsRequest request = spotifyApi.getUsersTopArtists()

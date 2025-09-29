@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class UserConfig {
-    @Bean
-    CommandLineRunner commandLineRunner(UserRepository repository, PasswordEncoder passwordEncoder){
+    //@Bean
+    /*CommandLineRunner commandLineRunner(UserRepository repository, PasswordEncoder passwordEncoder){
         return args -> {
             User mauri = new User(
                 "mauri",
@@ -19,5 +19,5 @@ public class UserConfig {
             );
             repository.saveAll(List.of(mauri));
         };
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "\"User\"")
+@Table(name = "\"User\"", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = {"email"})})
 public class User {
 
     @Id
