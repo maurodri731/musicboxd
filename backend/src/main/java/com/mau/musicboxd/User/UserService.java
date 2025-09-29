@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public void addNewUser(User user){
-        Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
+        Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
         if(userOptional.isPresent()){//check if the email has been used
             throw new IllegalStateException("email taken");
         }
@@ -40,12 +40,18 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
-    @Transactional
+    /*@Transactional
     public void updateName(Long userid, String name){
         User updateUser = userRepository.findById(userid).orElseThrow(() -> new IllegalStateException("User id " + userid + " not found"));
-        if(name != null && name.length() != 0 && !Objects.equals(updateUser.getName(), name)){
+        if(name != null && name.length() != 0 && !Objects.equals(updateUser.getFullName(), name)){
             updateUser.setName(name);
         }
+    }*/
+
+    public User findByEmail(String email){
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found with email" + email));
+        return user;
     }
 
     public User findUserById(Long userId){

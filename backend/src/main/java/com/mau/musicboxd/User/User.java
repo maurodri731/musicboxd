@@ -1,15 +1,23 @@
 package com.mau.musicboxd.User;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "\"User\"", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = {"email"})})
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(name = "unique_email", columnNames = {"email"}),
+    @UniqueConstraint(name = "unique_spotify_id", columnNames = {"spotify_id"})
+})
+@Data
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -22,41 +30,48 @@ public class User {
         strategy = GenerationType.SEQUENCE,
         generator = "user_sequence"
     )
-    
     private Long id;
-    private String name;
+    
+    private String firstName;
+    private String lastName;
+    private String displayName; // For Spotify users
     private String email;
-    private String password;
+    private String password; // Nullable for Spotify-only users
+    private String spotifyId; // For Spotify OAuth users
+    
+    private boolean emailVerified = false;
+    private boolean enabled = true;
+    private boolean accountNonLocked = true;
+    
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
+    
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    
+    private LocalDateTime lastLoginAt;
 
-    public User(){
-
-    }
-    public User(Long id, String name, String email){
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
-    public User(String name, String email, String password){
-        this.name = name;
+    // Constructor for email/password registration
+    public User(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
     }
 
-    public Long getId() {return id;}
-    public void setId(Long id) {this.id = id;}
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
-    public String getEmail() {return email;}
-    public void setEmail(String email) {this.email = email;}
-    public String getPassword() {return password;}
-    public void setPassword(String password) {this.password = password;}
-    public LocalDate getCreatedDate() {return createdAt;}
+    // Constructor for Spotify registration
+    public User(String email, String displayName, String spotifyId) {
+        this.email = email;
+        this.displayName = displayName;
+        this.spotifyId = spotifyId;
+        this.emailVerified = true; // Spotify emails are pre-verified
+    }
 
-    @Override
-    public String toString(){
-        return "name= " + this.name + " id= " + this.id;
+    // Computed property for full name
+    public String getFullName() {
+        if (firstName != null && lastName != null) {
+            return firstName + " " + lastName;
+        }
+        return displayName != null ? displayName : email;
     }
 }
