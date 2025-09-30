@@ -2,17 +2,21 @@ package com.mau.musicboxd.config;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.mau.musicboxd.SpotifySetup.ConfigKeys;
 
 import se.michaelthelin.spotify.SpotifyApi;
 
 @Configuration
 public class SpotifyConfig {
-    private String clientId = ConfigKeys.API_KEY.getKey();
-    private String clientSecret = ConfigKeys.API_SECRET.getKey();
+
+    @Value("${spotify.client.id}")
+    private String clientId;
+    @Value("${spotify.client.secret}")
+    private String clientSecret;
+    @Value("${spotify.redirect.uri}")
     private String redirectUri;
 
     @Bean
