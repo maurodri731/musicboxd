@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,8 @@ import lombok.NoArgsConstructor;
     @UniqueConstraint(name = "unique_spotify_id", columnNames = {"spotify_id"})
 })
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
 
@@ -36,7 +40,7 @@ public class User {
     private String lastName;
     private String displayName; // For Spotify users
     private String email;
-    private String password; // Nullable for Spotify-only users
+    private String password; // Nullable for Spotify-only users, and it will be hashed by the service
     private String spotifyId; // For Spotify OAuth users
     
     private boolean emailVerified = false;

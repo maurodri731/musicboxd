@@ -1,8 +1,10 @@
 package com.mau.musicboxd.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import com.mau.musicboxd.User.dto.RegisterUserDto;
+import com.mau.musicboxd.exception.EmailAlreadyExistsException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void addNewUser(User user){
-        Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
-        if(userOptional.isPresent()){//check if the email has been used
-            throw new IllegalStateException("email taken");
+    public User registerUser(RegisterUserDto dto){
+        if(userRepository.existsByEmail(dto.getEmail())){//check if the email has been used
+            throw new EmailAlreadyExistsException("Email taken");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));//encode the password before actually saving it in the database
+        User user = User.builder()
+                        .email(dto.getEmail())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .password(passwordEncoder.encode(dto.getPassword()))
+                        .build();
         userRepository.save(user);
+        return user;
     }
 
     public void deleteUser(Long id){
