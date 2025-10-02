@@ -31,12 +31,6 @@ public class SpotifyAuthController {
         this.spotifyApi = spotifyApi;
     }
 
-    /*protected static final SpotifyApi spotifyApi = new SpotifyApi.Builder()//build the object that will handle all of the api calls
-        .setClientId(ConfigKeys.API_KEY.getKey())
-        .setClientSecret(ConfigKeys.API_SECRET.getKey())
-        .setRedirectUri(redirectUri)
-        .build();*/
-
     @GetMapping("/spotify-login")//build the request so that the user gets redirected to the spotify login page... oAuth2!!!!
     @ResponseBody
     public String spotifyLogin() {
