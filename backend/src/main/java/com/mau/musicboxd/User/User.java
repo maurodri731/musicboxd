@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users", uniqueConstraints = {
     @UniqueConstraint(name = "unique_email", columnNames = {"email"}),
-    @UniqueConstraint(name = "unique_spotify_id", columnNames = {"spotify_id"})
+    @UniqueConstraint(name = "unique_spotify_id", columnNames = {"spotifyId"})
 })
 @Data
 @Builder
@@ -42,10 +42,15 @@ public class User {
     private String email;
     private String password; // Nullable for Spotify-only users, and it will be hashed by the service
     private String spotifyId; // For Spotify OAuth users
+
+    @Column(columnDefinition = "TEXT")
+    private String accessToken;//Access and Regresh tokens for spotify users
+    @Column(columnDefinition = "TEXT")
+    private String refreshToken;
     
-    private boolean emailVerified = false;
-    private boolean enabled = true;
-    private boolean accountNonLocked = true;
+    private boolean emailVerified;
+    private boolean enabled;
+    private boolean accountNonLocked;
     
     @CreatedDate
     private LocalDateTime createdAt;

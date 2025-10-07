@@ -7,16 +7,22 @@ import com.mau.musicboxd.auth.repository.PasswordResetTokenRepository;
 import com.mau.musicboxd.auth.repository.EmailVerificationTokenRepository;
 import com.mau.musicboxd.auth.entity.PasswordResetToken;
 import com.mau.musicboxd.auth.entity.EmailVerificationToken;
-
 import com.mau.musicboxd.User.User;
 import com.mau.musicboxd.User.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
+import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,18 +37,21 @@ public class AuthService {
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final SpotifyApi spotifyApi;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             EmailService emailService,
             PasswordResetTokenRepository passwordResetTokenRepository,
-            EmailVerificationTokenRepository emailVerificationTokenRepository) {
+            EmailVerificationTokenRepository emailVerificationTokenRepository,
+            SpotifyApi spotifyApi) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.emailVerificationTokenRepository = emailVerificationTokenRepository;
+        this.spotifyApi = spotifyApi;
     }
 
     /**
@@ -115,36 +124,69 @@ public class AuthService {
     /**
      * Register user from Spotify OAuth
      */
-    public User registerSpotifyUser(String email, String displayName, String spotifyId) {
-        log.info("Attempting to register Spotify user: {}", email);
+    public User registerSpotifyUser(String code) {
+        //--------first use the code to fetch the tokens
+        AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
+        String refreshToken = null;
+        String accessToken = null;
+        try{
+            final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRequest.execute();
 
-        // Check if user already exists
-        Optional<User> existingUser = userRepository.findByEmail(email);
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            // Update Spotify ID if not set
-            if (user.getSpotifyId() == null) {
-                user.setSpotifyId(spotifyId);
-                user = userRepository.save(user);
-            }
-            log.info("Existing user logged in via Spotify: {}", email);
-            return user;
+            refreshToken = authorizationCodeCredentials.getRefreshToken();
+            accessToken = authorizationCodeCredentials.getAccessToken();
+            spotifyApi.setAccessToken(accessToken);
+            spotifyApi.setRefreshToken(refreshToken);
+            //there is no need to save the tokens in variables separate from the Api object
+            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+        }
+        catch(IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e){
+            System.out.println("Error setting access and refresh tokens for the user" + e.getMessage());
         }
 
-        // Create new user from Spotify
-        User user = new User();
-        user.setEmail(email);
-        user.setDisplayName(displayName);
-        user.setSpotifyId(spotifyId);
-        user.setEmailVerified(true); // Spotify emails are pre-verified
-        user.setAccountNonLocked(true);
-        user.setEnabled(true);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setLastLoginAt(LocalDateTime.now());
+        //-----------Now use the tokens to fetch the users information
+        final GetCurrentUsersProfileRequest request = spotifyApi.getCurrentUsersProfile().build();
+        se.michaelthelin.spotify.model_objects.specification.User requestUser = null;//need this to map the api answer
+        try{
+            requestUser = request.execute();
+        }
+        catch(Exception e){
+            System.out.println("Error fetching user information" + e.getMessage());
+        }
 
-        User savedUser = userRepository.save(user);
-        log.info("Spotify user registered successfully: {}", savedUser.getEmail());
+        //---------And now save the users information
+        User savedUser = null;
+        if(requestUser != null){
+            log.info("Attempting to register Spotify user: {}", requestUser.getEmail());
 
+            // Check if user already exists
+            Optional<User> existingUser = userRepository.findByEmail(requestUser.getEmail());
+            if (existingUser.isPresent()) {
+                User user = existingUser.get();
+                // Update Spotify ID if not set
+                if (user.getSpotifyId() == null) {
+                    user.setSpotifyId(requestUser.getId());
+                    user = userRepository.save(user);
+                }
+                log.info("Existing user logged in via Spotify: {}", requestUser.getEmail());
+                return user;
+            }
+
+            // Create new user from Spotify
+            User user = new User();
+            user.setEmail(requestUser.getEmail());
+            user.setDisplayName(requestUser.getDisplayName());
+            user.setSpotifyId(requestUser.getId());
+            user.setEmailVerified(true); // Spotify emails are pre-verified
+            user.setAccountNonLocked(true);
+            user.setEnabled(true);
+            user.setCreatedAt(LocalDateTime.now());
+            user.setLastLoginAt(LocalDateTime.now());
+            user.setAccessToken(accessToken);
+            user.setRefreshToken(refreshToken);
+
+            savedUser = userRepository.save(user);
+            log.info("Spotify user registered successfully: {}", savedUser.getEmail());
+        }
         return savedUser;
     }
 

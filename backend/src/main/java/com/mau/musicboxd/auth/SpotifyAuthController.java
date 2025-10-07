@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mau.musicboxd.User.User;
+
 import jakarta.servlet.http.HttpServletResponse;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
@@ -21,14 +23,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class SpotifyAuthController {
     public static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/api/get-user-code");
     private String code = "";
     private final SpotifyApi spotifyApi;
+    private final AuthService authService;
 
-    public SpotifyAuthController(SpotifyApi spotifyApi){
+    public SpotifyAuthController(SpotifyApi spotifyApi, AuthService authService){
         this.spotifyApi = spotifyApi;
+        this.authService = authService;
     }
 
     @GetMapping("/spotify-login")//build the request so that the user gets redirected to the spotify login page... oAuth2!!!!
@@ -46,7 +50,7 @@ public class SpotifyAuthController {
 
     @GetMapping("/get-user-code")//when the user has logged in they will be redirected here, where the access token and the refresh token are fetched from the api
     public String getSpotifyUserCode(@RequestParam("code") String userCode, HttpServletResponse resposnse) throws IOException {
-        code = userCode;//the code used to fetch the access and refresh tokens is given with the redirect uri
+        /*code = userCode;//the code used to fetch the access and refresh tokens is given with the redirect uri
         AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
 
         try{
@@ -60,7 +64,8 @@ public class SpotifyAuthController {
         catch(IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        //when the access and refresh token are set, send them to the user detials page, this is the first thing the user sees after completing login with spotify
+        //when the access and refresh token are set, send them to the user detials page, this is the first thing the user sees after completing login with spotify*/
+        User user = authService.registerSpotifyUser(userCode);
         resposnse.sendRedirect("http://localhost:5173/user-page");
         return spotifyApi.getAccessToken();//this last return allows the app to keep running with the spotify credentials
     }
