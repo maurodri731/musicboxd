@@ -1,4 +1,4 @@
-package com.mau.musicboxd.Review;
+package com.mau.musicboxd.Review.dto;
 
 
 public class ReviewDTO {

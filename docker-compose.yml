@@ -1,6 +1,13 @@
 
 
 services:
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025" #SMTP
+      - "8025:8025" #Web UI
+    container_name: mailhog
+
   database:
     image: postgres:16.10-alpine
     container_name: musicboxd-app-db
@@ -33,9 +40,18 @@ services:
       SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
       SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI}
       JWT_SECRET: ${JWT_SECRET}
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_USERNAME: no-reply@musicboxd.com
+      SPRING_MAIL_PASSWORD: ""
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: false
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: false
+      APP_FRONTEND_URL: http://localhost:5173
     depends_on:
       database:
         condition: service_healthy
+      mailhog:
+        condition: service_started
 
   frontend:
     build:

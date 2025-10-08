@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mau.musicboxd.Album.Album;
 import com.mau.musicboxd.Album.AlbumService;
+import com.mau.musicboxd.Review.dto.ReviewDTO;
 import com.mau.musicboxd.User.User;
 import com.mau.musicboxd.User.UserService;
 
