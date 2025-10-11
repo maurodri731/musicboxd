@@ -1,16 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 .body-override {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #24265d;
+  background: linear-gradient(135deg, #581c87 0%, #000 50%, #000 100%);
 }
 #root {
   width: 100%;
@@ -29,6 +28,7 @@
   font-size: 1.37rem;
   font-weight: 600;
   margin-bottom: 1.87rem;
+  color: #000;
 }
 .login-container .social-login {
   display: flex;
@@ -156,6 +156,7 @@
   font-size: 1.06rem;
   font-weight: 500;
   margin: 1.75rem 0 0.31rem;
+  color: #000;
 }
 .login-container a {
   color: #454cff;

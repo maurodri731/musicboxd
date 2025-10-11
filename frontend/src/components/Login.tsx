@@ -48,7 +48,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2 className="form-title">Log in with</h2>
+      <h2 className="form-title" color="#000">Log in with</h2>
       <SocialLogin />
       <p className="separator"><span>or</span></p>
       <form onSubmit={handleSubmit} className="login-form">
