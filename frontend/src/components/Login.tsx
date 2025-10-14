@@ -19,7 +19,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={{width: '30vw'}}>
       <h2 className="form-title" color="#000">Log in with</h2>
       <SocialLogin />
       <p className="separator"><span>or</span></p>
@@ -59,6 +59,7 @@ const Login = () => {
           value={email}
           onChange={setEmail}
           name="email"
+          addStyle={false}
         />
         <InputField 
           type="password" 
@@ -67,6 +68,7 @@ const Login = () => {
           value={password}
           onChange={setPassword}
           name="password"
+          addStyle={false}
         />
         <a href="#" className="forgot-password-link">Forgot password?</a>
         <button 

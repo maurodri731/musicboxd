@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 
+//REMEMBER TO GET THE LOGO OUT OF THE AUTHPAGE!!!!!!! IT SHOULD BE PART OF THIS COMPONENT!!!!!!!!
 export default class NavbarComp extends Component {
   render() {
     return (

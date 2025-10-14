@@ -310,3 +310,9 @@ body {
 .feature-description {
     color: #9ca3af;
 }
+
+.logo-link{
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}

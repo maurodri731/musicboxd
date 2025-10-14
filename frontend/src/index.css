@@ -16,8 +16,9 @@
   padding: 0.0rem;
 }
 .login-container {
+  display: flexbox;
   margin: 0 auto;
-  max-width: 410px;
+  /*max-width: 30vw;/*410px;*/
   padding: 2rem 1.5rem;
   border-radius: 0.5rem;
   background: #fff;

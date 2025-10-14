@@ -23,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @Validated
 @Slf4j
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserAuthController {
 
     private final AuthService authService;

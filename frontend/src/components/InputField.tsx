@@ -7,14 +7,21 @@ interface Props {
     value: string;
     onChange: (value: string) => void;
     name: string;
+    addStyle: boolean
 }
 
-const InputField = ({ type, placeholder, icon, value, onChange, name }: Props) => {
+const InputField = ({ type, placeholder, icon, value, onChange, name, addStyle }: Props) => {
   // State to toggle password visibility
   const [isPasswordShown, setIsPasswordShown] = useState(false);
+
+  const addSignupStyles = {
+    float: 'left' as const,
+    width: '50%',
+    padding: '0px 5px'
+  }
   
   return (
-    <div className="input-wrapper">
+    <div className="input-wrapper" style={addStyle ? addSignupStyles : {}}>
       <input
         type={isPasswordShown ? 'text' : type}
         placeholder={placeholder}
