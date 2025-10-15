@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-
+import NavbarComp from './NavbarComp';
 
 interface UserType{
   displayName: string;
@@ -23,7 +23,8 @@ const UserPage = () => {
     }, [shouldFetch]);
   return (
     <div>
-        {userPage ? <h1 className="text" key={userPage.displayName}>{userPage.displayName}</h1> : <h1 className='text'>LOADING...</h1>}
+      <NavbarComp/>
+      {userPage ? <h1 className="text" key={userPage.displayName}>{userPage.displayName}</h1> : <h1 className='text'>LOADING...</h1>}
     </div>
 
   );

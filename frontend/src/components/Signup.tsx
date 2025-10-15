@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SocialLogin from "./SocialLogin";
 import InputField from "./InputField";
+import { Container } from "react-bootstrap";
 
 export default function Signup(){
     const [email, setEmail] = useState("");
@@ -60,77 +61,79 @@ export default function Signup(){
   };
 
   return (
-    <div className="login-container" style={{width: '40vw'}}>
-        <h2 className="form-title" color="#000">Sign up with</h2>
-        <SocialLogin />
-        <p className="separator"><span>or</span></p>
-        <form onSubmit={handleSubmit} className="login-form">
-            <InputField
-            type="firstName"
-            placeholder="First Name"    
-            icon=""
-            value={firstName}
-            onChange={setFirstname}
-            name="firstName"
-            addStyle={true}
-            />
-            <InputField
-            type="lastName"
-            placeholder="Last Name"    
-            icon=""
-            value={lastName}
-            onChange={setLastname}
-            name="lastName"
-            addStyle={true}
-            />
-            <InputField
-            type="displayName"
-            placeholder="Username"    
-            icon=""
-            value={displayName}
-            onChange={setDisplayname}
-            name="displayName"
-            addStyle={true}
-            />
-            <InputField 
-            type="email" 
-            placeholder="Email address" 
-            icon="mail"
-            value={email}
-            onChange={setEmail}
-            name="email"
-            addStyle={true}
-            />
-            <InputField 
-            type="password" 
-            placeholder="Password" 
-            icon="lock"
-            value={password}
-            onChange={setPassword}
-            name="password"
-            addStyle={true}
-            />
-            <InputField
-            type="passConfirm"
-            placeholder="Confirm Password"    
-            icon="lock"
-            value={passConfirm}
-            onChange={setPassConfirm}
-            name="passConfirm"
-            addStyle={true}
-            />
-            <a href="#" className="forgot-password-link">Forgot password?</a>
-            <button 
-            type="submit" 
-            className="login-button"
-            disabled={isLoading}
-            >
-            {isLoading ? 'Logging in...' : 'Log In'}
-            </button>
-        </form>
-        <p className="signup-prompt">
-            Don't have an account? <a href="#" className="signup-link">Sign up</a>
-        </p>
-    </div>
+    <Container style={{padding: "100px 0 0 0"}}>
+      <div className="login-container" style={{width: '40vw'}}>
+          <h2 className="form-title" color="#000">Sign up with</h2>
+          <SocialLogin />
+          <p className="separator"><span>or</span></p>
+          <form onSubmit={handleSubmit} className="login-form">
+              <InputField
+              type="firstName"
+              placeholder="First Name"    
+              icon=""
+              value={firstName}
+              onChange={setFirstname}
+              name="firstName"
+              addStyle={true}
+              />
+              <InputField
+              type="lastName"
+              placeholder="Last Name"    
+              icon=""
+              value={lastName}
+              onChange={setLastname}
+              name="lastName"
+              addStyle={true}
+              />
+              <InputField
+              type="displayName"
+              placeholder="Username"    
+              icon=""
+              value={displayName}
+              onChange={setDisplayname}
+              name="displayName"
+              addStyle={true}
+              />
+              <InputField 
+              type="email" 
+              placeholder="Email address" 
+              icon="mail"
+              value={email}
+              onChange={setEmail}
+              name="email"
+              addStyle={true}
+              />
+              <InputField 
+              type="password" 
+              placeholder="Password" 
+              icon="lock"
+              value={password}
+              onChange={setPassword}
+              name="password"
+              addStyle={true}
+              />
+              <InputField
+              type="passConfirm"
+              placeholder="Confirm Password"    
+              icon="lock"
+              value={passConfirm}
+              onChange={setPassConfirm}
+              name="passConfirm"
+              addStyle={true}
+              />
+              <a href="#" className="forgot-password-link">Forgot password?</a>
+              <button 
+              type="submit" 
+              className="login-button"
+              disabled={isLoading}
+              >
+              {isLoading ? 'Logging in...' : 'Log In'}
+              </button>
+          </form>
+          <p className="signup-prompt">
+              Don't have an account? <a href="#" className="signup-link">Sign up</a>
+          </p>
+      </div>
+    </Container>
   )
 }

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import SocialLogin from "./SocialLogin";
 import InputField from "./InputField";
+import { Container } from "react-bootstrap";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/auth/login', {
+      const response = await fetch('http://localhost:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,42 +48,44 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container" style={{width: '30vw'}}>
-      <h2 className="form-title" color="#000">Log in with</h2>
-      <SocialLogin />
-      <p className="separator"><span>or</span></p>
-      <form onSubmit={handleSubmit} className="login-form">
-        <InputField 
-          type="email" 
-          placeholder="Email address" 
-          icon="mail"
-          value={email}
-          onChange={setEmail}
-          name="email"
-          addStyle={false}
-        />
-        <InputField 
-          type="password" 
-          placeholder="Password" 
-          icon="lock"
-          value={password}
-          onChange={setPassword}
-          name="password"
-          addStyle={false}
-        />
-        <a href="#" className="forgot-password-link">Forgot password?</a>
-        <button 
-          type="submit" 
-          className="login-button"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Logging in...' : 'Log In'}
-        </button>
-      </form>
-      <p className="signup-prompt">
-        Don't have an account? <a href="#" className="signup-link">Sign up</a>
-      </p>
-    </div>
+    <Container style={{padding:"100px 0 0 0"}}>
+      <div className="login-container" style={{width: '30vw'}}>
+        <h2 className="form-title" color="#000">Log in with</h2>
+        <SocialLogin />
+        <p className="separator"><span>or</span></p>
+        <form onSubmit={handleSubmit} className="login-form">
+          <InputField 
+            type="email" 
+            placeholder="Email address" 
+            icon="mail"
+            value={email}
+            onChange={setEmail}
+            name="email"
+            addStyle={false}
+          />
+          <InputField 
+            type="password" 
+            placeholder="Password" 
+            icon="lock"
+            value={password}
+            onChange={setPassword}
+            name="password"
+            addStyle={false}
+          />
+          <a href="#" className="forgot-password-link">Forgot password?</a>
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Log In'}
+          </button>
+        </form>
+        <p className="signup-prompt">
+          Don't have an account? <a href="#" className="signup-link">Sign up</a>
+        </p>
+      </div>
+    </Container>
   )
 }
 

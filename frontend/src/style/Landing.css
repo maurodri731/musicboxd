@@ -20,7 +20,8 @@ body {
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -12px;
+    /*margin: 0 -12px;*/
+    padding-top: 40px;
 }
 
 .col-6 {
