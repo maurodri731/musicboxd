@@ -1,6 +1,5 @@
-import { Heart, Users, TrendingUp, Disc3, CassetteTape } from 'lucide-react';
+import { Heart, Users, TrendingUp, Disc3 } from 'lucide-react';
 import "../style/Landing.css";
-import { Link } from 'react-router-dom';
 import NavbarComp from '../components/NavbarComp';
 
 export default function Landing() {
@@ -15,7 +14,7 @@ export default function Landing() {
               <div className="badge-custom">
                 ✨ Join music enthusiasts
               </div>
-              <h1 className="hero-title">
+              <h1 className="hero-title text-9xl leading-snug">
                 Collect Your Musical Journey
               </h1>
               <p className="hero-description">
