@@ -1,9 +1,21 @@
 import { Heart, Users, TrendingUp, Disc3 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import "../style/Landing.css";
 import NavbarComp from '../components/NavbarComp';
+import { PopulateLandingAlbums, PopAlbum } from '../util/LandingUtil';
 
 export default function Landing() {
   console.log("Landing page rendering")
+  const [albums, setAlbums] = useState<PopAlbum[]>([]);
+
+  useEffect(() => {
+    PopulateLandingAlbums()
+      .then(albumList => setAlbums(albumList))
+      .catch(err => {
+        console.error('Failed to load albums:', err);
+      });
+}, []);
+
   return (
     <>
       <NavbarComp/>
@@ -31,9 +43,11 @@ export default function Landing() {
               </div>
 
               <div className="row g-3 mb-5">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="col-6 col-md-3">
-                    <div className="album-placeholder"></div>
+                {albums.map((album) => (
+                  <div key={album.albumId} className="col-6 col-md-3">
+                    <div className="album-placeholder">
+                      <img src={album.imageUrl} alt={`${album.albumName} Album cover`}/>
+                    </div>
                   </div>
                 ))}
               </div>
