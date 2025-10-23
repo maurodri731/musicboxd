@@ -1,0 +1,63 @@
+import { Music, Search } from "lucide-react";
+import React, { useState } from 'react';
+import { PopulateAlbums, PopAlbum } from "../util/Util";
+import NavbarComp from "../components/NavbarComp";
+import AlbumCard from "../components/AlbumCard";
+
+export default function SearchAlbums(){
+    const [search, setSearch] = useState('');
+    const [albums, setAlbums] = useState<PopAlbum[]>([]);
+    const [loading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      try{
+        const albumsList = await PopulateAlbums(`http://localhost:8080/api/search-albums?query=${search}`)
+        setAlbums(albumsList);
+      } catch (err) {
+        console.log("Unable to load the albums for this artist", err);
+      } finally {
+        setIsLoading(true);
+      }
+  };
+
+    return (
+        <>
+          <NavbarComp/>
+
+          <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 mb-12">
+            <h2 className="p-1 text-white text-lg font-semibold">Log away!</h2>
+            <div className="p-2 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-lg">
+              <div className="relative bg-gray-900 rounded-lg">
+                <Music className="absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-400 w-5 h-5" />
+                <form className="flex" onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search albums by title or artist name..."
+                    className="w-full pl-12 pr-4 py-3 bg-transparent text-white placeholder-gray-400 focus:outline-none rounded-lg"
+                  />
+                  <button type="submit" className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition flex items-center gap-2">
+                    <Search className="w-5 h-5" />
+                    Search
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 h-96 w-full place-items-center relative">
+            {
+              albums.map((album) => (
+                <AlbumCard title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
+            ))}
+            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+          </div>
+        </>
+    )
+}

@@ -25,8 +25,10 @@ import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.User;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import se.michaelthelin.spotify.requests.data.albums.GetAlbumRequest;
+import se.michaelthelin.spotify.requests.data.artists.GetArtistsAlbumsRequest;
 import se.michaelthelin.spotify.requests.data.browse.GetListOfNewReleasesRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
+import se.michaelthelin.spotify.requests.data.search.SearchItemRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
 
 @Service
@@ -114,7 +116,7 @@ public class SpotifyService {
             
             Paging<AlbumSimplified> albumSimplifiedPaging = request.execute();
 
-            for(AlbumSimplified album : albumSimplifiedPaging.getItems()) {
+            /*for(AlbumSimplified album : albumSimplifiedPaging.getItems()) {
                 String imageUrl = null;
                 Image[] images = album.getImages();
                 if (images != null && images.length > 0) {
@@ -133,12 +135,73 @@ public class SpotifyService {
                 );
 
                 albumDtos.add(dto);
-            }                       
+            }*/
+            unwindAlbums(albumSimplifiedPaging, albumDtos);
         }
         catch(IOException | SpotifyWebApiException | ParseException e){
             System.err.println("Error fetching landing page albums: " + e.getMessage());
             e.printStackTrace();
         }
         return albumDtos;
+    }
+
+    public List<PopAlbumsDto> getAlbumSearch(String queryString){
+        List<PopAlbumsDto> albumDtos= new ArrayList<PopAlbumsDto>();
+        try{
+            refreshAccessToken();
+            SearchItemRequest searchRequest = spotifyApi.searchItem(queryString, "album,artist")
+            .limit(5)
+            .build();
+
+            var searchResult = searchRequest.execute();
+
+            Paging<Artist> artists = searchResult.getArtists();
+            Paging<AlbumSimplified> albums = searchResult.getAlbums();
+
+            boolean hasArtistMatch = artists != null && artists.getItems().length > 0;
+            boolean hasAlbumMatch = albums != null && albums.getItems().length > 0;
+
+            if(hasArtistMatch){
+                Artist specificArtist = artists.getItems()[0];
+
+                GetArtistsAlbumsRequest albumsRequest = spotifyApi.getArtistsAlbums(specificArtist.getId())
+                    .include_groups("album")
+                    .limit(10)
+                    .build();
+                
+                Paging<AlbumSimplified> artistAlbums = albumsRequest.execute();
+                unwindAlbums(artistAlbums, albumDtos);
+            }
+            else if(hasAlbumMatch){
+                unwindAlbums(searchResult.getAlbums(), albumDtos);
+            }
+        }
+        catch(IOException | SpotifyWebApiException | ParseException e){
+            System.err.println("Error fetching albums for the searching page: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return albumDtos;
+    }
+
+    public static void unwindAlbums(Paging<AlbumSimplified> albumSimplifiedPaging, List<PopAlbumsDto> albumsDtos){
+        for(AlbumSimplified album : albumSimplifiedPaging.getItems()) {
+            String imageUrl = null;
+            Image[] images = album.getImages();
+            if (images != null && images.length > 0) {
+                imageUrl = images[0].getUrl();
+            }
+            String artistName = album.getArtists().length > 0 ? album.getArtists()[0].getName() : "Unknown Artist";
+            String artistId = album.getArtists().length > 0 ? album.getArtists()[0].getId() : "null";
+
+            PopAlbumsDto dto = new PopAlbumsDto(
+                album.getId(),
+                album.getName(),
+                artistName,
+                artistId,
+                imageUrl,
+                album.getReleaseDate()
+            );
+            albumsDtos.add(dto);
+        }
     }
 }

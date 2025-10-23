@@ -1,19 +1,17 @@
 import { useState } from "react";
 import SocialLogin from "./SocialLogin";
 import InputField from "./InputField";
-import { Container } from "react-bootstrap";
 
-export default function Signup(){
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [passConfirm, setPassConfirm] = useState("");
-    const [displayName, setDisplayname] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [firstName, setFirstname] = useState("");
-    const [lastName, setLastname] = useState("");
- 
+export default function Signup() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passConfirm, setPassConfirm] = useState("");
+  const [displayName, setDisplayname] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstname] = useState("");
+  const [lastName, setLastname] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !password) {
@@ -21,9 +19,9 @@ export default function Signup(){
       return;
     }
 
-    if(password !== passConfirm) {
-        alert("The passwords do not match");
-        return;
+    if (password !== passConfirm) {
+      alert("The passwords do not match");
+      return;
     }
 
     setIsLoading(true);
@@ -47,7 +45,6 @@ export default function Signup(){
       if (response.ok) {
         const data = await response.json();
         console.log('Sign-up successful:', data);
-        // Handle successful login (e.g., redirect, store token, etc.)
       } else {
         console.error('Sign-up failed:', response.statusText);
         alert('Sign-up failed. Please check your credentials.');
@@ -61,79 +58,100 @@ export default function Signup(){
   };
 
   return (
-    <Container style={{padding: "100px 0 0 0"}}>
-      <div className="login-container" style={{width: '40vw'}}>
-          <h2 className="form-title" color="#000">Sign up with</h2>
-          <SocialLogin />
-          <p className="separator"><span>or</span></p>
-          <form onSubmit={handleSubmit} className="login-form">
-              <InputField
-              type="firstName"
-              placeholder="First Name"    
+    <div className="pt-24 px-4">
+      <div className="max-w-2xl mx-auto p-8 rounded-lg bg-white shadow-xl">
+        <h2 className="text-center text-2xl font-semibold mb-8 text-black">
+          Sign up with
+        </h2>
+        
+        <SocialLogin />
+        
+        <div className="relative my-6 text-center bg-white">
+          <span className="relative z-10 bg-white text-blue-600 font-medium text-lg px-4">
+            or
+          </span>
+          <div className="absolute left-0 top-1/2 h-px w-full bg-blue-400"></div>
+        </div>
+        
+        <form onSubmit={handleSubmit}>
+          <div className="flex gap-2">
+            <InputField
+              type="text"
+              placeholder="First Name"
               icon=""
               value={firstName}
               onChange={setFirstname}
               name="firstName"
               addStyle={true}
-              />
-              <InputField
-              type="lastName"
-              placeholder="Last Name"    
+            />
+            <InputField
+              type="text"
+              placeholder="Last Name"
               icon=""
               value={lastName}
               onChange={setLastname}
               name="lastName"
               addStyle={true}
-              />
-              <InputField
-              type="displayName"
-              placeholder="Username"    
-              icon=""
-              value={displayName}
-              onChange={setDisplayname}
-              name="displayName"
-              addStyle={true}
-              />
-              <InputField 
-              type="email" 
-              placeholder="Email address" 
-              icon="mail"
-              value={email}
-              onChange={setEmail}
-              name="email"
-              addStyle={true}
-              />
-              <InputField 
-              type="password" 
-              placeholder="Password" 
-              icon="lock"
-              value={password}
-              onChange={setPassword}
-              name="password"
-              addStyle={true}
-              />
-              <InputField
-              type="passConfirm"
-              placeholder="Confirm Password"    
-              icon="lock"
-              value={passConfirm}
-              onChange={setPassConfirm}
-              name="passConfirm"
-              addStyle={true}
-              />
-              <a href="#" className="forgot-password-link">Forgot password?</a>
-              <button 
-              type="submit" 
-              className="login-button"
-              disabled={isLoading}
-              >
-              {isLoading ? 'Logging in...' : 'Log In'}
-              </button>
-          </form>
-          <p className="signup-prompt">
-              Don't have an account? <a href="#" className="signup-link">Sign up</a>
-          </p>
+            />
+          </div>
+          
+          <InputField
+            type="text"
+            placeholder="Username"
+            icon=""
+            value={displayName}
+            onChange={setDisplayname}
+            name="displayName"
+            addStyle={false}
+          />
+          
+          <InputField 
+            type="email" 
+            placeholder="Email address" 
+            icon="mail"
+            value={email}
+            onChange={setEmail}
+            name="email"
+            addStyle={false}
+          />
+          
+          <InputField 
+            type="password" 
+            placeholder="Password" 
+            icon="lock"
+            value={password}
+            onChange={setPassword}
+            name="password"
+            addStyle={false}
+          />
+          
+          <InputField
+            type="password"
+            placeholder="Confirm Password"
+            icon="lock"
+            value={passConfirm}
+            onChange={setPassConfirm}
+            name="passConfirm"
+            addStyle={false}
+          />
+          
+          <button 
+            type="submit" 
+            className="w-full h-14 text-white text-lg font-medium mt-9 rounded bg-blue-600 hover:bg-blue-900 transition-colors disabled:opacity-50"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing up...' : 'Sign Up'}
+          </button>
+        </form>
+        
+        <p className="text-center text-lg font-medium mt-7 mb-1 text-black">
+          Already have an account?{' '}
+          <a href="#" className="text-blue-600 font-medium hover:underline">
+            Log in
+          </a>
+        </p>
       </div>
-    </Container>
-  )
+    </div>
+  );
 }
+

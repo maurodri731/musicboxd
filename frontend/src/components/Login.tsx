@@ -1,8 +1,6 @@
-// Updated Login.tsx with POST request
 import { useState } from "react";
 import SocialLogin from "./SocialLogin";
 import InputField from "./InputField";
-import { Container } from "react-bootstrap";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,7 +32,6 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
-        // Handle successful login (e.g., redirect, store token, etc.)
       } else {
         console.error('Login failed:', response.statusText);
         alert('Login failed. Please check your credentials.');
@@ -48,12 +45,22 @@ const Login = () => {
   };
 
   return (
-    <Container style={{padding:"100px 0 0 0"}}>
-      <div className="login-container" style={{width: '30vw'}}>
-        <h2 className="form-title" color="#000">Log in with</h2>
+    <div className="pt-24 px-4">
+      <div className="max-w-md mx-auto p-8 rounded-lg bg-white shadow-xl">
+        <h2 className="text-center text-2xl font-semibold mb-8 text-black">
+          Log in with
+        </h2>
+        
         <SocialLogin />
-        <p className="separator"><span>or</span></p>
-        <form onSubmit={handleSubmit} className="login-form">
+        
+        <div className="relative my-6 text-center bg-white">
+          <span className="relative z-10 bg-white text-blue-600 font-medium text-lg px-4">
+            or
+          </span>
+          <div className="absolute left-0 top-1/2 h-px w-full bg-blue-400"></div>
+        </div>
+        
+        <form onSubmit={handleSubmit}>
           <InputField 
             type="email" 
             placeholder="Email address" 
@@ -72,21 +79,32 @@ const Login = () => {
             name="password"
             addStyle={false}
           />
-          <a href="#" className="forgot-password-link">Forgot password?</a>
+          
+          <a 
+            href="#" 
+            className="block w-fit -mt-2 text-blue-600 font-medium hover:underline"
+          >
+            Forgot password?
+          </a>
+          
           <button 
             type="submit" 
-            className="login-button"
+            className="w-full h-14 text-white text-lg font-medium mt-9 rounded bg-blue-600 hover:bg-blue-900 transition-colors disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
-        <p className="signup-prompt">
-          Don't have an account? <a href="#" className="signup-link">Sign up</a>
+        
+        <p className="text-center text-lg font-medium mt-7 mb-1 text-black">
+          Don't have an account?{' '}
+          <a href="#" className="text-blue-600 font-medium hover:underline">
+            Sign up
+          </a>
         </p>
       </div>
-    </Container>
-  )
-}
+    </div>
+  );
+};
 
 export default Login;
