@@ -3,17 +3,20 @@ import React, { useState } from 'react';
 import { PopulateAlbums, PopAlbum } from "../util/Util";
 import NavbarComp from "../components/NavbarComp";
 import AlbumCard from "../components/AlbumCard";
+import Modal from "../components/Modal";
+import ReviewForm from "../components/ReviewForm";
 
 export default function SearchAlbums(){
     const [search, setSearch] = useState('');
     const [albums, setAlbums] = useState<PopAlbum[]>([]);
     const [loading, setIsLoading] = useState(false);
+    const [modalState, setModalState] = useState<{ isOpen: boolean; selectedAlbum: PopAlbum | null}>({isOpen:false, selectedAlbum:null});
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
 
       try{
-        const albumsList = await PopulateAlbums(`http://localhost:8080/api/search-albums?query=${search}`)
+        const albumsList = await PopulateAlbums(`http://localhost:8080/api/search-albums?query=${search}`)//search logic for the album search
         setAlbums(albumsList);
       } catch (err) {
         console.log("Unable to load the albums for this artist", err);
@@ -21,6 +24,14 @@ export default function SearchAlbums(){
         setIsLoading(true);
       }
   };
+
+  const handleClick = (album: PopAlbum) => {//handles the storing of the album details for the modal to use
+    console.log("Album clicked");
+    setModalState({ isOpen: true, selectedAlbum:album});
+  };
+
+  //sample data to test the modal
+  const sampleAlbum:PopAlbum = {albumId:"1234", albumName:"Random Access Memories", artistId:"1234", artistName:"Daft Punk", imageUrl:"https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5", releaseDate: new Date("2025-12-25")}
 
     return (
         <>
@@ -51,13 +62,17 @@ export default function SearchAlbums(){
           <div className="grid grid-cols-3 gap-3 h-96 w-full place-items-center relative">
             {
               albums.map((album) => (
-                <AlbumCard title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
+                <AlbumCard onClick={() => handleClick(album)} title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
             ))}
-            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
           </div>
+
+          <Modal isOpen={modalState.isOpen} onClose={() => setModalState({isOpen:false, selectedAlbum:null})}>
+            <ReviewForm album={modalState.selectedAlbum}/>
+          </Modal>
         </>
     )
 }
