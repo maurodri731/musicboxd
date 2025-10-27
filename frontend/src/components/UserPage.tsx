@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import NavbarComp from './NavbarComp';
+import NavbarComp from './UtilComps/NavbarComp';
 
 interface UserType{
   displayName: string;

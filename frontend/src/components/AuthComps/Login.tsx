@@ -1,15 +1,11 @@
 import { useState } from "react";
-import SocialLogin from "./SocialLogin";
-import InputField from "./InputField";
+import SocialLogin from "../UtilComps/SocialLogin";
+import InputField from "../UtilComps/InputField";
 
-export default function Signup() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passConfirm, setPassConfirm] = useState("");
-  const [displayName, setDisplayname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [firstName, setFirstname] = useState("");
-  const [lastName, setLastname] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,38 +15,29 @@ export default function Signup() {
       return;
     }
 
-    if (password !== passConfirm) {
-      alert("The passwords do not match");
-      return;
-    }
-
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:8080/auth/register', {
+      const response = await fetch('http://localhost:8080/auth/login', {
         method: 'POST',
         headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:8080',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: email,
-          password: password,
-          displayName: displayName,
-          firstName: firstName,
-          lastName: lastName,
+          password: password
         })
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Sign-up successful:', data);
+        console.log('Login successful:', data);
       } else {
-        console.error('Sign-up failed:', response.statusText);
-        alert('Sign-up failed. Please check your credentials.');
+        console.error('Login failed:', response.statusText);
+        alert('Login failed. Please check your credentials.');
       }
     } catch (error) {
-      console.error('Error during sign-up:', error);
+      console.error('Error during login:', error);
       alert('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -59,9 +46,9 @@ export default function Signup() {
 
   return (
     <div className="pt-24 px-4">
-      <div className="max-w-2xl mx-auto p-8 rounded-lg bg-white shadow-xl">
+      <div className="max-w-md mx-auto p-8 rounded-lg bg-white shadow-xl">
         <h2 className="text-center text-2xl font-semibold mb-8 text-black">
-          Sign up with
+          Log in with
         </h2>
         
         <SocialLogin />
@@ -74,37 +61,6 @@ export default function Signup() {
         </div>
         
         <form onSubmit={handleSubmit}>
-          <div className="flex gap-2">
-            <InputField
-              type="text"
-              placeholder="First Name"
-              icon=""
-              value={firstName}
-              onChange={setFirstname}
-              name="firstName"
-              addStyle={true}
-            />
-            <InputField
-              type="text"
-              placeholder="Last Name"
-              icon=""
-              value={lastName}
-              onChange={setLastname}
-              name="lastName"
-              addStyle={true}
-            />
-          </div>
-          
-          <InputField
-            type="text"
-            placeholder="Username"
-            icon=""
-            value={displayName}
-            onChange={setDisplayname}
-            name="displayName"
-            addStyle={false}
-          />
-          
           <InputField 
             type="email" 
             placeholder="Email address" 
@@ -114,7 +70,6 @@ export default function Signup() {
             name="email"
             addStyle={false}
           />
-          
           <InputField 
             type="password" 
             placeholder="Password" 
@@ -125,33 +80,31 @@ export default function Signup() {
             addStyle={false}
           />
           
-          <InputField
-            type="password"
-            placeholder="Confirm Password"
-            icon="lock"
-            value={passConfirm}
-            onChange={setPassConfirm}
-            name="passConfirm"
-            addStyle={false}
-          />
+          <a 
+            href="#" 
+            className="block w-fit -mt-2 text-blue-600 font-medium hover:underline"
+          >
+            Forgot password?
+          </a>
           
           <button 
             type="submit" 
             className="w-full h-14 text-white text-lg font-medium mt-9 rounded bg-blue-600 hover:bg-blue-900 transition-colors disabled:opacity-50"
             disabled={isLoading}
           >
-            {isLoading ? 'Signing up...' : 'Sign Up'}
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
         
         <p className="text-center text-lg font-medium mt-7 mb-1 text-black">
-          Already have an account?{' '}
+          Don't have an account?{' '}
           <a href="#" className="text-blue-600 font-medium hover:underline">
-            Log in
+            Sign up
           </a>
         </p>
       </div>
     </div>
   );
-}
+};
 
+export default Login;

@@ -1,4 +1,4 @@
-import { PopAlbum } from "../util/Util"
+import { PopAlbum } from "../../util/Util"
 
 interface Props{
     album: PopAlbum | null;

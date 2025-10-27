@@ -1,6 +1,6 @@
 import { Heart, Users, TrendingUp, Disc3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import NavbarComp from '../components/NavbarComp';
+import NavbarComp from '../components/UtilComps/NavbarComp';
 import { PopulateAlbums, PopAlbum } from '../util/Util';
 
 export default function Landing() {

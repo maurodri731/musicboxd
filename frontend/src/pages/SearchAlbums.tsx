@@ -1,10 +1,10 @@
 import { Music, Search } from "lucide-react";
 import React, { useState } from 'react';
 import { PopulateAlbums, PopAlbum } from "../util/Util";
-import NavbarComp from "../components/NavbarComp";
-import AlbumCard from "../components/AlbumCard";
-import Modal from "../components/Modal";
-import ReviewForm from "../components/ReviewForm";
+import NavbarComp from "../components/UtilComps/NavbarComp";
+import AlbumCard from "../components/AlbumSearchComps/AlbumCard";
+import Modal from "../components/UtilComps/Modal";
+import ReviewForm from "../components/AlbumSearchComps/ReviewForm";
 
 export default function SearchAlbums(){
     const [search, setSearch] = useState('');
