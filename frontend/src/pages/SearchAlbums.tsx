@@ -59,15 +59,18 @@ export default function SearchAlbums(){
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 h-96 w-full place-items-center relative">
-            {
-              albums.map((album) => (
-                <AlbumCard onClick={() => handleClick(album)} title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
-            ))}
-            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-            <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+
+          <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-12">
+              {
+                albums.map((album) => (
+                  <AlbumCard key={album.albumId} onClick={() => handleClick(album)} title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
+              ))}
+              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+            </div>
           </div>
 
           <Modal isOpen={modalState.isOpen} onClose={() => setModalState({isOpen:false, selectedAlbum:null})}>

@@ -36,7 +36,7 @@ export default function Modal({isOpen, onClose, children}: Props) {
         onClick={onClose}
         >
         <div
-            className={`flex bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-lg shadow-2xl p-4 sm:p-6 md:p-8 w-full max-w-5xl max-h-[90vh] md:max-h-[75vh] lg:max-h-[80vh] transition-all duration-300 ${
+            className={`flex bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-lg shadow-2xl p-4 sm:p-6 md:p-8 w-full max-w-6xl max-h-148 transition-all duration-300 ${
                 showContent
                 ? 'scale-100 opacity-100'
                 : 'scale-75 opacity-0'
