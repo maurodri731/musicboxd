@@ -1,6 +1,8 @@
 import { useState } from "react";
 import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -10,6 +12,8 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +49,7 @@ export default function Signup() {
       if (response.ok) {
         const data = await response.json();
         console.log('Sign-up successful:', data);
+        setUser(data.user);
       } else {
         console.error('Sign-up failed:', response.statusText);
         alert('Sign-up failed. Please check your credentials.');
@@ -54,6 +59,7 @@ export default function Signup() {
       alert('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
+      navigate("/search-albums");
     }
   };
 

@@ -75,6 +75,7 @@ public class AuthService {
         user.setEmailVerified(false);
         user.setAccountNonLocked(true);
         user.setEnabled(true);
+        user.setDisplayName(request.getDisplayName());
         user.setCreatedAt(LocalDateTime.now());
 
         User savedUser = userRepository.save(user);

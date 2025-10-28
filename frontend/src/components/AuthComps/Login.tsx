@@ -1,11 +1,15 @@
 import { useState } from "react";
 import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +36,7 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
+        setUser(data.user);
       } else {
         console.error('Login failed:', response.statusText);
         alert('Login failed. Please check your credentials.');
@@ -41,6 +46,7 @@ const Login = () => {
       alert('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
+      navigate("/search-albums");
     }
   };
 
