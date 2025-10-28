@@ -35,7 +35,10 @@ export default function Signup() {
     try {//use the api function to call register the user (axios)
       const res = await api.post<AuthResponse>("/auth/register", {//the api function is in Util.ts
         email,
-        password
+        password,
+        displayName,
+        firstName,
+        lastName
       });
       
       setUser(res.data.user);//setUser comes from useAuth() hook, updates the context with the user that has just registered
