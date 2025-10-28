@@ -3,52 +3,51 @@ import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api, { AuthResponse } from "../../util/Util"
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = useAuth();
-  const navigate = useNavigate();
+  const { setUser } = useAuth();//Custom hook that takes care of the Auth Context, will be useful when querying for the users detials
+  const navigate = useNavigate();//Used to send the user elsewhere after signing in
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!email || !password) {
+    alert("Please fill in all fields");
+    return;
+  }
+
+  setIsLoading(true);
+  
+  try {//call the api using the api function from util
+    const res = await api.post<AuthResponse>("/auth/login", {
+      email,
+      password
+    });
     
-    if (!email || !password) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    setIsLoading(true);
+    setUser(res.data.user);//The response is guaranteed to contain a user object, as long as it doesn't return an error
+    console.log(res.data.user);
+    console.log(res.data.message);
+    navigate("/user-page");//Send the user to some other part of the page, this will also re-render the Context with the new user value
+  } catch (error) {
+    setUser(null);//The Context can have a null user
     
-    try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
-        setUser(data.user);
-      } else {
-        console.error('Login failed:', response.statusText);
-        alert('Login failed. Please check your credentials.');
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-      alert('An error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-      navigate("/search-albums");
+    if (axios.isAxiosError(error)) {
+      console.error(error.response?.data);
+      const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      alert(errorMessage);
+    } else {
+      console.error(error);
+      alert('An unexpected error occurred. Please try again.');
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="pt-24 px-4">
@@ -57,7 +56,7 @@ const Login = () => {
           Log in with
         </h2>
         
-        <SocialLogin />
+        <SocialLogin />{/*This will carry any third party authentication */}
         
         <div className="relative my-6 text-center bg-white">
           <span className="relative z-10 bg-white text-blue-600 font-medium text-lg px-4">

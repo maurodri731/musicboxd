@@ -3,6 +3,8 @@ import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api, { AuthResponse } from "../../util/Util";
+import axios from 'axios';
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -12,8 +14,8 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
-  const { setUser } = useAuth();
-  const navigate = useNavigate();
+  const { setUser } = useAuth();//Custom hook that takes care of the Auth Context, will be useful when querying for the users detials
+  const navigate = useNavigate();//Used to send the user elsewhere after signing in
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,36 +32,28 @@ export default function Signup() {
 
     setIsLoading(true);
     
-    try {
-      const response = await fetch('http://localhost:8080/auth/register', {
-        method: 'POST',
-        headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:8080',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          displayName: displayName,
-          firstName: firstName,
-          lastName: lastName,
-        })
+    try {//use the api function to call register the user (axios)
+      const res = await api.post<AuthResponse>("/auth/register", {//the api function is in Util.ts
+        email,
+        password
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Sign-up successful:', data);
-        setUser(data.user);
-      } else {
-        console.error('Sign-up failed:', response.statusText);
-        alert('Sign-up failed. Please check your credentials.');
-      }
+      
+      setUser(res.data.user);//setUser comes from useAuth() hook, updates the context with the user that has just registered
+      console.log(res.data.message);
+      navigate("/search-albums");
     } catch (error) {
-      console.error('Error during sign-up:', error);
-      alert('An error occurred. Please try again.');
+      setUser(null);//The Authcontext can take a null or a user, if signup fails then just send a null for redundancy
+      
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data);
+        const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+        alert(errorMessage);
+      } else {
+        console.error(error);
+        alert('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
-      navigate("/search-albums");
     }
   };
 
