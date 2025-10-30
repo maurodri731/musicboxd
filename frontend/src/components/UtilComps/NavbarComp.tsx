@@ -1,21 +1,22 @@
 import { CassetteTape, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function NavbarComp() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
   
-  const getNavMode = () => {
-    if (location.pathname === '/') return 'landing';
-    if (location.pathname === '/auth') return 'auth';
-    if (location.pathname === '/user-page') return 'user-page';
-    if (location.pathname === '/search-albums') return 'search-albums';
+  const getNavMode = () => {//expose different links in the nav bar depending on the page and if the user is signed or not
+    if (location.pathname === '/' && user === null) return 'landing';//when there is no one signed in
+    if (location.pathname === '/auth') return 'auth';//to change the color of the logo
+    if (user !== null) return 'user-nav';//user-nav is exposed when there is a user signed in
   };
   
   const mode = getNavMode();
   const textColor = mode === 'auth' ? 'text-black' : 'text-white';
-  const fixNav = mode === 'search-albums' ? '' : 'fixed';
+  const fixNav = mode === 'user-nav' ? '' : 'fixed';
 
   return (
     <nav className={`${fixNav} top-0 left-0 right-0 z-50 bg-transparent`}>
@@ -39,15 +40,21 @@ export default function NavbarComp() {
 
           {/*Desktop Navigation*/}
           <div className="hidden lg:flex items-center">
-            {mode === 'user-page' && (
+            {mode === 'user-nav' && (
               <div className="flex items-center gap-6">
-                <Link to="#home" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
-                  Home
+                <Link to="/search-albums" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
+                  Search and Log
                 </Link>
                 <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
-                  Link
+                  My Logs
                 </Link>
-                <div className="relative group">
+                <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
+                  My Lists
+                </Link>
+                <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
+                  My Profile
+                </Link>
+                {/*<div className="relative group">
                   <button className={`${textColor} hover:opacity-80 transition-opacity`}>
                     Dropdown
                   </button>
@@ -66,13 +73,13 @@ export default function NavbarComp() {
                       Separated link
                     </Link>
                   </div>
-                </div>
+                </div>*/}
               </div>
             )}
             
             {mode === 'landing' && (
               <div className="flex items-center gap-3">
-                <Link to='/auth?mode=sign-in'>
+                <Link to='/auth?mode=login'>
                   <button className="px-6 py-2 border border-gray-700 text-white rounded-lg hover:border-purple-600 hover:bg-purple-600 hover:bg-opacity-10 transition-all">
                     Sign In
                   </button>
@@ -98,7 +105,7 @@ export default function NavbarComp() {
         {/*Mobile Navigation*/}
         {isOpen && (
           <div className="lg:hidden pb-4">
-            {mode === 'user-page' && (
+            {mode === 'user-nav' && (
               <div className="flex flex-col gap-4">
                 <Link to="#home" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
                   Home

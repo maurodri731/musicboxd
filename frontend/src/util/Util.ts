@@ -44,7 +44,7 @@ export async function PopulateAlbums(apiUrl:string): Promise<PopAlbum[]> {
     return response.json();
 }
 
-const api = axios.create({
+const api = axios.create({//call the api from here
   baseURL: "http://localhost:8080",
   withCredentials: true,
 });

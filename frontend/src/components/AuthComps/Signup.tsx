@@ -2,7 +2,7 @@ import { useState } from "react";
 import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api, { AuthResponse } from "../../util/Util";
 import axios from 'axios';
 
@@ -14,8 +14,9 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
-  const { setUser } = useAuth();//Custom hook that takes care of the Auth Context, will be useful when querying for the users detials
+  const { setUser, user } = useAuth();//Custom hook that takes care of the Auth Context, will be useful when querying for the users detials
   const navigate = useNavigate();//Used to send the user elsewhere after signing in
+  console.log(user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,9 +150,9 @@ export default function Signup() {
         
         <p className="text-center text-lg font-medium mt-7 mb-1 text-black">
           Already have an account?{' '}
-          <a href="#" className="text-blue-600 font-medium hover:underline">
+          <Link to="/auth?mode=login" className="text-blue-600 font-medium hover:underline">
             Log in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

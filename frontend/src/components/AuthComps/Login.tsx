@@ -2,7 +2,7 @@ import { useState } from "react";
 import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api, { AuthResponse } from "../../util/Util"
 import axios from 'axios';
 
@@ -103,9 +103,9 @@ const handleSubmit = async (e: React.FormEvent) => {
         
         <p className="text-center text-lg font-medium mt-7 mb-1 text-black">
           Don't have an account?{' '}
-          <a href="#" className="text-blue-600 font-medium hover:underline">
-            Sign up
-          </a>
+          <Link to="/auth?mode=sign-up" className="text-blue-600 font-medium hover:underline">
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>

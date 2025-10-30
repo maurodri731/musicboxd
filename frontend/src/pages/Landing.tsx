@@ -2,9 +2,11 @@ import { Heart, Users, TrendingUp, Disc3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import NavbarComp from '../components/UtilComps/NavbarComp';
 import { PopulateAlbums, PopAlbum } from '../util/Util';
+import { useAuth } from '../context/AuthContext';
 
 export default function Landing() {
-  console.log("Landing page rendering");
+  const { user } = useAuth();
+  console.log("Landing page rendering", user);
   const [albums, setAlbums] = useState<PopAlbum[]>([]);
 
   useEffect(() => {
