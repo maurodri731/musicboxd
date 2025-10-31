@@ -7,6 +7,7 @@ import AuthPage from "./pages/AuthPage";
 import { AnimatePresence } from 'framer-motion';
 import SearchAlbums from "./pages/SearchAlbums";
 import BackgroundGradient from "./components/UtilComps/BackgroundGradient";
+import AuthGuard from "./context/AuthGuard";
 
 
 const App = () => {
@@ -18,10 +19,13 @@ const App = () => {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<div><Landing /></div>} />
             <Route path="/auth" element={<div><AuthPage /></div>} />
-            <Route path="/user-top-artists" element={<div><TopArtists/></div>}/> 
-            <Route path="/user-page" element={<div><UserPage/></div>}/>
-            <Route path="/search-albums" element={<div><SearchAlbums/></div>}/>
-            </Routes>
+
+            <Route element={<AuthGuard/>}>
+              <Route path="/user-top-artists" element={<div><TopArtists/></div>}/> 
+              <Route path="/user-page" element={<div><UserPage/></div>}/>
+              <Route path="/search-albums" element={<div><SearchAlbums/></div>}/>
+            </Route>
+          </Routes>
         </AnimatePresence>
       </div>
   )

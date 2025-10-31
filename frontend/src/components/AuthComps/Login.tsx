@@ -2,7 +2,7 @@ import { useState } from "react";
 import SocialLogin from "../UtilComps/SocialLogin";
 import InputField from "../UtilComps/InputField";
 import { useAuth } from "../../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api, { AuthResponse } from "../../util/Util"
 import axios from 'axios';
 
@@ -12,6 +12,9 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuth();//Custom hook that takes care of the Auth Context, will be useful when querying for the users detials
   const navigate = useNavigate();//Used to send the user elsewhere after signing in
+  const location = useLocation();
+  
+  const from = location.state?.from || '/';
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -32,7 +35,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setUser(res.data.user);//The response is guaranteed to contain a user object, as long as it doesn't return an error
     console.log(res.data.user);
     console.log(res.data.message);
-    navigate("/user-page");//Send the user to some other part of the page, this will also re-render the Context with the new user value
+    navigate(from, {replace: true});//Send the user to some other part of the page, this will also re-render the Context with the new user value
   } catch (error) {
     setUser(null);//The Context can have a null user
     
