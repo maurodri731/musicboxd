@@ -1,7 +1,7 @@
 import { Heart, Users, TrendingUp, Disc3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import NavbarComp from '../components/UtilComps/NavbarComp';
-import { PopulateAlbums, PopAlbum } from '../util/Util';
+import api, { PopAlbum } from '../util/Util';
 import { useAuth } from '../context/AuthContext';
 
 export default function Landing() {
@@ -9,12 +9,12 @@ export default function Landing() {
   console.log("Landing page rendering", user);
   const [albums, setAlbums] = useState<PopAlbum[]>([]);
 
-  useEffect(() => {
-    PopulateAlbums('http://localhost:8080/api/most-popular')
-      .then(albumList => setAlbums(albumList))
-      .catch(err => {
-        console.error('Failed to load albums:', err);
-      });
+  useEffect(() => {    
+    api.get<PopAlbum[]>('/api/most-popular')
+    .then(response => setAlbums(response.data))
+    .catch(err => {
+      console.error('Failed to load popular albums: ', err);
+    });
   }, []);
 
   return (
