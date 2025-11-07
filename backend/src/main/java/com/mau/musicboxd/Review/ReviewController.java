@@ -37,10 +37,15 @@ public class ReviewController {
         //so the album can be created and the function called, if it exists it just won't do anything.
         //the album has to be created first, however, you don't want the review to not find the album
         //this should probably be a transaction, but it would't be bad if the album got added but the review didn't go through?
-        Album albumReviewed = new Album(review.getAlbum().getAlbumId(), review.getAlbum().getAlbumName() 
-            , review.getAlbum().getArtistName(), LocalDate.parse(review.getAlbum().getReleaseDate()) , review.getAlbum().getImageUrl());
-        
-        albumService.addAlbum(albumReviewed);
+        Album albumReviewed;
+        if(!albumService.existsBySpotifyId(review.getAlbum().getAlbumId())){//only create a new album if it doesn't already exist (duhhh!)
+            albumReviewed = new Album(review.getAlbum().getAlbumId(), review.getAlbum().getAlbumName() 
+                , review.getAlbum().getArtistName(), LocalDate.parse(review.getAlbum().getReleaseDate()) , review.getAlbum().getImageUrl());
+            albumService.addAlbum(albumReviewed);
+        }
+        else{//if the album already exists then just set that as the album that will be associated with the review
+            albumReviewed = albumService.findBySpotifyId(review.getAlbum().getAlbumId());
+        }
         Review newReview = new Review();
         User user = userService.findUserById(review.getUser_id());
         newReview.setAlbum(albumReviewed);

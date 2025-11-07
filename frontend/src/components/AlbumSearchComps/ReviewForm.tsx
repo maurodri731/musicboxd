@@ -1,5 +1,5 @@
 import { PopAlbum } from "../../util/Util"
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import api from "../../util/Util";
 import { useAuth } from "../../context/AuthContext";
 import { LoadingSpinner } from "../UtilComps/LoadingSpinner";
@@ -11,18 +11,20 @@ export default function ReviewForm({album}: Props ) {
     const [review, setReview] = useState("");
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
-    const rating = 5;
+    const rating = 5;//placeholder rating for the rating of the album
 
     const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log(user?.id);
         setLoading(true);
         try{
-            api.post("/api/review", {
+            const response = await api.post("/api/review", {
                 user_id: user?.id,
                 text: review, 
                 rating, 
                 album,
             });
+
+            console.log(response)
         } catch (error){
             console.log("Error submitting the review", error);
         } finally {
@@ -64,7 +66,7 @@ export default function ReviewForm({album}: Props ) {
                     Save
                 </button>)
                 : (
-                    <LoadingSpinner size={50} color="#FFFFFF"/>
+                    <LoadingSpinner size="sm" color="purple"/>
                 )
                 }
             </div>
