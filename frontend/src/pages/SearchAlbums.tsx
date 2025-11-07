@@ -1,12 +1,13 @@
-import { Music, Search } from "lucide-react";
 import React, { useEffect, useState } from 'react';
-import { PopulateAlbums, PopAlbum } from "../util/Util";
+import { Music, Search } from "lucide-react";
+import api, { PopAlbum } from "../util/Util";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { LoadingSpinner } from "../components/UtilComps/LoadingSpinner";
 import NavbarComp from "../components/UtilComps/NavbarComp";
 import AlbumCard from "../components/AlbumSearchComps/AlbumCard";
 import Modal from "../components/UtilComps/Modal";
 import ReviewForm from "../components/AlbumSearchComps/ReviewForm";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export default function SearchAlbums(){
     const [search, setSearch] = useState('');
@@ -25,15 +26,16 @@ export default function SearchAlbums(){
 
     const handleSubmit = async (e: React.FormEvent) => {//submitting logic
       e.preventDefault();
-
-      try{
-        const albumsList = await PopulateAlbums(`http://localhost:8080/api/search-albums?query=${search}`)//search logic for the album search
-        setAlbums(albumsList);
-      } catch (err) {
-        console.log("Unable to load the albums for this artist", err);
-      } finally {
-        setIsLoading(true);
-      }
+      setIsLoading(true);
+     try{
+      const response = await api.get<PopAlbum[]>(`/api/search-albums?query=${search}`);
+      const albumsList = response.data;
+      setAlbums(albumsList);
+     } catch (error) {
+      console.log("Unable to load the albums for this artist", error)
+     } finally {
+      setIsLoading(false);
+     }
   };
 
   const handleClick = (album: PopAlbum) => {//handles the storing of the album details for the modal to use
@@ -42,18 +44,18 @@ export default function SearchAlbums(){
   };
 
   //sample data to test the modal
-  const sampleAlbum:PopAlbum = {albumId:"1234", albumName:"Random Access Memories", artistId:"1234", artistName:"Daft Punk", imageUrl:"https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5", releaseDate: new Date("2025-12-25")}
+  //const sampleAlbum:PopAlbum = {albumId:"1234", albumName:"Random Access Memories", artistId:"1234", artistName:"Daft Punk", imageUrl:"https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5", releaseDate: new Date("2025-12-25")}
 
     return (
         <>
           <NavbarComp/>
-
+          {/*Prompt the user to search for albums, */}
           <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 mb-12">
             <h2 className="p-1 text-white text-lg font-semibold">Log away!</h2>
             <div className="p-2 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-lg">
               <div className="relative bg-gray-900 rounded-lg">
                 <Music className="absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-400 w-5 h-5" />
-                <form className="flex" onSubmit={handleSubmit}>
+                <form className="flex" onSubmit={handleSubmit}>{/*Search bar*/}
                   <input
                     type="text"
                     value={search}
@@ -62,7 +64,7 @@ export default function SearchAlbums(){
                     className="w-full pl-12 pr-4 py-3 bg-transparent text-white placeholder-gray-400 focus:outline-none rounded-lg"
                   />
                   <button type="submit" className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition flex items-center gap-2">
-                    <Search className="w-5 h-5" />
+                    <Search className="w-5 h-5" />{/*Submit Button */}
                     Search
                   </button>
                 </form>
@@ -70,20 +72,29 @@ export default function SearchAlbums(){
             </div>
           </div>
 
-
+          {/*Dynamically output the album cards, including a loading animation */}
           <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-12">
-              {
-                albums.map((album) => (
-                  <AlbumCard key={album.albumId} onClick={() => handleClick(album)} title={album.albumName} artist={album.artistName} cover={album.imageUrl} /> 
-              ))}
-              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
-              <AlbumCard onClick={() => handleClick(sampleAlbum)} title="Random Access Memories" artist="Pearl Jam" cover="https://i.scdn.co/image/ab67616d0000b2736fcdcbbd9cae9001ca5b20d5"/>  
+              {searchLoading ? (
+                <LoadingSpinner size="lg" color="purple"/>//Loading animation
+              ) : albums.length === 0 ? (//check if there are any results from the search query, indicate if there weren't any
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-400 text-xl">No albums found</p>
+                </div>
+              ) : (
+                albums.map((album) => (//output the albums found
+                  <AlbumCard 
+                    key={album.albumId} 
+                    onClick={() => handleClick(album)} 
+                    title={album.albumName} 
+                    artist={album.artistName} 
+                    cover={album.imageUrl} 
+                  /> 
+                ))
+              )}
             </div>
           </div>
-
+          {/*Modal and the review form, note that the modal state communicates the selected album to the form*/}
           <Modal isOpen={modalState.isOpen} onClose={() => setModalState({isOpen:false, selectedAlbum:null})}>
             <ReviewForm album={modalState.selectedAlbum}/>
           </Modal>
