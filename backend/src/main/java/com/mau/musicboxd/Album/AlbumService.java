@@ -33,4 +33,14 @@ public class AlbumService {
             .orElseThrow(() -> new RuntimeException("Album not found with id " + albumId));
         return album;
     }
+
+    public boolean existsBySpotifyId(String spotifyId){
+        return albumRespository.existsBySpotifyId(spotifyId);
+    }
+
+    public Album findBySpotifyId(String spotifyId){
+        Album album = albumRespository.findBySpotifyId(spotifyId)
+            .orElseThrow(() -> new RuntimeException("Album not found with spotifyId" + spotifyId));
+        return album;
+    }
 }

@@ -1,6 +1,10 @@
 package com.mau.musicboxd.Review;
 
+import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,7 @@ import com.mau.musicboxd.User.User;
 import com.mau.musicboxd.User.UserService;
 
 @RestController
+@CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173")
 @RequestMapping("/api")
 public class ReviewController {
     private final ReviewService reviewService;
@@ -25,16 +30,24 @@ public class ReviewController {
         this.albumService = albumService;
     }
 
+    @Transactional
     @PostMapping("/review")
-    public ResponseEntity<Review> addNewReview(@RequestBody ReviewDTO reviewDto){
-        Review review = new Review();
-        User user = userService.findUserById(reviewDto.getUser_id());
-        Album album = albumService.findAlbumById(reviewDto.getAlbum_id());
-        review.setAlbum(album);
-        review.setUser(user);
-        review.setText(reviewDto.getText());
-        review.setRating(reviewDto.getRating());
-        reviewService.addReview(review);
-        return ResponseEntity.status(201).body(review);
+    public ResponseEntity<Review> addNewReview(@RequestBody ReviewDTO review){
+        //the albumservice.addAlbum checks if the album exists in the database
+        //so the album can be created and the function called, if it exists it just won't do anything.
+        //the album has to be created first, however, you don't want the review to not find the album
+        //this should probably be a transaction, but it would't be bad if the album got added but the review didn't go through?
+        Album albumReviewed = new Album(review.getAlbum().getAlbumId(), review.getAlbum().getAlbumName() 
+            , review.getAlbum().getArtistName(), LocalDate.parse(review.getAlbum().getReleaseDate()) , review.getAlbum().getImageUrl());
+        
+        albumService.addAlbum(albumReviewed);
+        Review newReview = new Review();
+        User user = userService.findUserById(review.getUser_id());
+        newReview.setAlbum(albumReviewed);
+        newReview.setUser(user);
+        newReview.setText(review.getText());
+        newReview.setRating(review.getRating());
+        reviewService.addReview(newReview);
+        return ResponseEntity.status(201).body(newReview);
     }
 }

@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "\"Album\"")
+@AllArgsConstructor
 public class Album {
     
     @Id

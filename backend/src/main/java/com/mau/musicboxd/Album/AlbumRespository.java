@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface AlbumRespository extends JpaRepository<Album, Long> {
     
     Optional<Album> findBySpotifyId(String spotifyId);
+    boolean existsBySpotifyId(String spotifyId);
 }

@@ -8,7 +8,6 @@ interface AuthContextType {//List all of the available details and functions for
     user: User | null;
     loading: boolean;
     logout: () => Promise<void>;
-    login: () => Promise<void>;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
@@ -38,14 +37,8 @@ export const AuthProvider: React.FC<{children:ReactNode}> = ({children}) => {
         setUser(null);
     };
 
-    const login = async () => {//Might be used as the refactoring of the Login call in Login.tsx, haven't decided yet
-        await api.post<AuthResponse>("auth/login")
-        .then(res => setUser(res.data.user as User))
-        .catch(() => setUser(null))
-        .finally(() => setLoading(false));
-    }
     return (//Make the functions and variables available to all of the children of AuthProvider
-        <AuthContext.Provider value={{ user, loading, login, logout, setUser}}>
+        <AuthContext.Provider value={{ user, loading, logout, setUser}}>
             {children}
         </AuthContext.Provider>
     );

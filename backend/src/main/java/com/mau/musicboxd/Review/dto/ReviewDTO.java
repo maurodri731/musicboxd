@@ -1,9 +1,10 @@
 package com.mau.musicboxd.Review.dto;
 
+import com.mau.musicboxd.SpotifySetup.dto.PopAlbumsDto;
 
 public class ReviewDTO {
     private Long user_id;
-    private Long album_id;
+    private PopAlbumsDto album;
     private String text;
     private Integer rating;
     
@@ -12,12 +13,6 @@ public class ReviewDTO {
     }
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
-    }
-    public Long getAlbum_id() {
-        return album_id;
-    }
-    public void setAlbum_id(Long album_id) {
-        this.album_id = album_id;
     }
     public String getText() {
         return text;
@@ -31,7 +26,12 @@ public class ReviewDTO {
     public void setRating(Integer rating) {
         this.rating = rating;
     }
-
+    public PopAlbumsDto getAlbum() {
+        return album;
+    }
+    public void setAlbum(PopAlbumsDto album) {
+        this.album = album;
+    }
     // getters and setters
     
 }
