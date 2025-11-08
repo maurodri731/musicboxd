@@ -48,7 +48,7 @@ export default function NavbarComp() {
                 <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
                   My Logs
                 </Link>
-                <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
+                <Link to="/my-reviews" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
                   My Lists
                 </Link>
                 <Link to="#link" className={`${textColor} hover:opacity-80 transition-opacity no-underline`}>
