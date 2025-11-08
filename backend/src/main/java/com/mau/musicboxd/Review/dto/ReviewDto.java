@@ -2,7 +2,7 @@ package com.mau.musicboxd.Review.dto;
 
 import com.mau.musicboxd.SpotifySetup.dto.PopAlbumsDto;
 
-public class ReviewDTO {
+public class ReviewDto {
     private Long user_id;
     private PopAlbumsDto album;
     private String text;

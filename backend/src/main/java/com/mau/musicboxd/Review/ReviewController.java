@@ -2,23 +2,29 @@ package com.mau.musicboxd.Review;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mau.musicboxd.Album.Album;
 import com.mau.musicboxd.Album.AlbumService;
-import com.mau.musicboxd.Review.dto.ReviewDTO;
+import com.mau.musicboxd.Review.dto.ReviewDto;
+import com.mau.musicboxd.Review.dto.ReviewRequestDto;
 import com.mau.musicboxd.User.User;
 import com.mau.musicboxd.User.UserService;
+import com.mau.musicboxd.util.PageResponse;
 
 @RestController
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173")
 @RequestMapping("/api")
+@CrossOrigin(allowCredentials = "true", origins = "http://localhost:5173")
 public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
@@ -32,7 +38,7 @@ public class ReviewController {
 
     @Transactional
     @PostMapping("/review")
-    public ResponseEntity<Review> addNewReview(@RequestBody ReviewDTO review){
+    public ResponseEntity<Review> addNewReview(@RequestBody ReviewDto review){
         //the albumservice.addAlbum checks if the album exists in the database
         //so the album can be created and the function called, if it exists it just won't do anything.
         //the album has to be created first, however, you don't want the review to not find the album
@@ -54,5 +60,10 @@ public class ReviewController {
         newReview.setRating(review.getRating());
         reviewService.addReview(newReview);
         return ResponseEntity.status(201).body(newReview);
+    }
+
+    @GetMapping(path = "/get-user-reviews/{userId}")
+    public ResponseEntity<PageResponse<ReviewRequestDto>> getUserReviews(@PathVariable("userId") Long userId, @PageableDefault(size = 20)Pageable pageable){
+        return ResponseEntity.ok().body(reviewService.getUserReviews(userId, pageable));
     }
 }
