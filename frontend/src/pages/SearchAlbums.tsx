@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Music, Search } from "lucide-react";
 import api, { PopAlbum } from "../util/Util";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { LoadingSpinner } from "../components/UtilComps/LoadingSpinner";
 import NavbarComp from "../components/UtilComps/NavbarComp";
 import AlbumCard from "../components/AlbumSearchComps/AlbumCard";
@@ -14,15 +12,6 @@ export default function SearchAlbums(){
     const [albums, setAlbums] = useState<PopAlbum[]>([]);
     const [searchLoading, setIsLoading] = useState(false);
     const [modalState, setModalState] = useState<{ isOpen: boolean; selectedAlbum: PopAlbum | null}>({isOpen:false, selectedAlbum:null});
-    const navigate = useNavigate();
-    const { user, loading } = useAuth();
-
-    useEffect( () => {//check if the user is signed-in, if they aren't then redirect them to the sign up page
-      if(loading) return;
-      if(user === null){
-        navigate("/auth?mode=sign-up")
-      }
-    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {//submitting logic
       e.preventDefault();
