@@ -9,6 +9,7 @@ import SearchAlbums from "./pages/SearchAlbums";
 import BackgroundGradient from "./components/UtilComps/BackgroundGradient";
 import AuthGuard from "./context/AuthGuard";
 import Lists from "./pages/Lists";
+import UserReviews from "./pages/UserReviews";
 
 
 const App = () => {
@@ -25,7 +26,8 @@ const App = () => {
               <Route path="/user-top-artists" element={<div><TopArtists/></div>}/> 
               <Route path="/user-page" element={<div><UserPage/></div>}/>
               <Route path="/search-albums" element={<div><SearchAlbums/></div>}/>
-              <Route path="/my-reviews" element={<div><Lists/></div>}/>
+              <Route path="/my-lists" element={<div><Lists/></div>}/>
+              <Route path="/my-reviews" element={<div><UserReviews/></div>}/>
             </Route>
           </Routes>
         </AnimatePresence>
