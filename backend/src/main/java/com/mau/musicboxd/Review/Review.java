@@ -12,7 +12,8 @@ import jakarta.persistence.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "\"Review\"")
+@Table(name = "\"Review\"",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "album_id"}))
 public class Review {
 
     @Id

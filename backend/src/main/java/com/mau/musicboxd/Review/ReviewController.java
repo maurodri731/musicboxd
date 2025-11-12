@@ -2,8 +2,10 @@ package com.mau.musicboxd.Review;
 
 import java.time.LocalDate;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,23 +45,35 @@ public class ReviewController {
         //so the album can be created and the function called, if it exists it just won't do anything.
         //the album has to be created first, however, you don't want the review to not find the album
         //this should probably be a transaction, but it would't be bad if the album got added but the review didn't go through?
-        Album albumReviewed;
-        if(!albumService.existsBySpotifyId(review.getAlbum().getAlbumId())){//only create a new album if it doesn't already exist (duhhh!)
-            albumReviewed = new Album(review.getAlbum().getAlbumId(), review.getAlbum().getAlbumName() 
-                , review.getAlbum().getArtistName(), LocalDate.parse(review.getAlbum().getReleaseDate()) , review.getAlbum().getImageUrl());
-            albumService.addAlbum(albumReviewed);
+        try{
+            Album albumReviewed;
+            if(!albumService.existsBySpotifyId(review.getAlbum().getAlbumId())){//only create a new album if it doesn't already exist (duhhh!)
+                albumReviewed = new Album(review.getAlbum().getAlbumId(), review.getAlbum().getAlbumName() 
+                    , review.getAlbum().getArtistName(), LocalDate.parse(review.getAlbum().getReleaseDate()) , review.getAlbum().getImageUrl());
+                albumService.addAlbum(albumReviewed);
+            }
+            else{//if the album already exists then just set that as the album that will be associated with the review
+                albumReviewed = albumService.findBySpotifyId(review.getAlbum().getAlbumId());
+            }
+            Review newReview = new Review();
+            User user = userService.findUserById(review.getUser_id());
+            newReview.setAlbum(albumReviewed);
+            newReview.setUser(user);
+            newReview.setText(review.getText());
+            newReview.setRating(review.getRating());
+            reviewService.addReview(newReview);
+            return ResponseEntity.status(201).body(newReview);
         }
-        else{//if the album already exists then just set that as the album that will be associated with the review
-            albumReviewed = albumService.findBySpotifyId(review.getAlbum().getAlbumId());
+        catch(DataIntegrityViolationException e){
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(null);
         }
-        Review newReview = new Review();
-        User user = userService.findUserById(review.getUser_id());
-        newReview.setAlbum(albumReviewed);
-        newReview.setUser(user);
-        newReview.setText(review.getText());
-        newReview.setRating(review.getRating());
-        reviewService.addReview(newReview);
-        return ResponseEntity.status(201).body(newReview);
+        catch(Exception e){
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
+        }
     }
 
     @GetMapping(path = "/get-user-reviews/{userId}")
